@@ -9,7 +9,7 @@ import {
   handleAddNote,
   handleGetModels,
   handleGetModelFields
-} from '../../server/handlers/card-handler.js';
+} from '../../server/handlers';
 
 /**
  * Card-related tools category

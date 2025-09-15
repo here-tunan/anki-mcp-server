@@ -1,4 +1,4 @@
-# Anki MCP Server
+# MCP Server Anki
 
 <div align="center">
   <img src="./src/public/icons8-anki-480.png" alt="Anki Logo" width="120" height="120">

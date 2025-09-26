@@ -8,7 +8,10 @@ import {
   handleSearchCards,
   handleAddNote,
   handleGetModels,
-  handleGetModelFields
+  handleGetModelFields,
+  handleUpdateNote,
+  handleGetNoteInfo,
+  handleDeleteNotes
 } from '../../server/handlers';
 
 /**
@@ -102,6 +105,65 @@ export const cardTools: ToolCategory = {
         },
       },
       handler: handleGetModelFields,
+    },
+    {
+      definition: {
+        name: 'update_note',
+        description: 'Update fields of an existing note',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            noteId: {
+              type: 'number',
+              description: 'ID of the note to update',
+            },
+            fields: {
+              type: 'object',
+              description: 'Fields to update with their new values',
+              additionalProperties: {
+                type: 'string'
+              },
+            },
+          },
+          required: ['noteId', 'fields'],
+        },
+      },
+      handler: handleUpdateNote,
+    },
+    {
+      definition: {
+        name: 'get_note_info',
+        description: 'Get detailed information about a specific note',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            noteId: {
+              type: 'number',
+              description: 'ID of the note to get information about',
+            },
+          },
+          required: ['noteId'],
+        },
+      },
+      handler: handleGetNoteInfo,
+    },
+    {
+      definition: {
+        name: 'delete_notes',
+        description: 'Delete one or more notes by their IDs',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            noteIds: {
+              type: 'array',
+              items: { type: 'number' },
+              description: 'Array of note IDs to delete',
+            },
+          },
+          required: ['noteIds'],
+        },
+      },
+      handler: handleDeleteNotes,
     },
   ],
 };

@@ -19,6 +19,8 @@ A Model Context Protocol (MCP) server that bridges Anki with AI tools, enabling 
 - 📚 **Deck Management**: Get deck lists, view deck statistics
 - 🔍 **Card Search**: Search cards using Anki's advanced query syntax
 - ➕ **Smart Creation**: Create and manage Anki cards with AI assistance
+- ✏️ **Card Editing**: Update existing card fields and content
+- 🗑️ **Card Deletion**: Delete unwanted cards and notes
 - 📊 **Data Analysis**: Get learning statistics and progress information
 - 🔧 **Template Management**: View and use different note types
 
@@ -103,6 +105,9 @@ Claude: I'll create this word card for you...
 | `get_deck_stats` | Get deck statistics | `deckName` |
 | `search_cards` | Search cards | `query` |
 | `add_note` | Add new note | `deckName`, `modelName`, `fields`, `tags` |
+| `update_note` | Update existing note fields | `noteId`, `fields` |
+| `get_note_info` | Get detailed note information | `noteId` |
+| `delete_notes` | Delete one or more notes | `noteIds` |
 | `get_models` | Get all note types | None |
 | `get_model_fields` | Get note type fields | `modelName` |
 
@@ -183,6 +188,55 @@ Add a new note to Anki.
     "Back": "lasting for a very short time"
   },
   "tags": ["vocabulary", "adjective"]
+}
+```
+
+### update_note
+Update fields of an existing note.
+
+**Parameters:**
+- `noteId`: The ID of the note to update
+- `fields`: Object with field names and new values
+
+**Example:**
+```json
+{
+  "noteId": 1234567890,
+  "fields": {
+    "Back": "lasting for an extremely short time"
+  }
+}
+```
+
+### get_note_info
+Get detailed information about a specific note.
+
+**Parameters:**
+- `noteId`: The ID of the note to query
+
+**Returns:**
+```json
+{
+  "noteId": 1234567890,
+  "modelName": "Basic",
+  "fields": {
+    "Front": "ephemeral",
+    "Back": "lasting for a very short time"
+  },
+  "tags": ["vocabulary", "adjective"]
+}
+```
+
+### delete_notes
+Delete one or more notes.
+
+**Parameters:**
+- `noteIds`: Array of note IDs to delete
+
+**Example:**
+```json
+{
+  "noteIds": [1234567890, 9876543210]
 }
 ```
 

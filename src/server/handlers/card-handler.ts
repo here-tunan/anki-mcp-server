@@ -4,7 +4,7 @@
  */
 
 import { AnkiConnectClient } from '../../anki/anki-connect.js';
-import { ToolArguments, SearchCardsParams, AddNoteParams } from '../../types/index.js';
+import { ToolArguments, SearchCardsParams, AddNoteParams } from '../../types';
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 
 /**
@@ -205,7 +205,7 @@ export async function handleGetModelFields(
 ): Promise<CallToolResult> {
   try {
     const { modelName } = args as { modelName: string };
-    
+
     if (!modelName) {
       return {
         content: [{
@@ -217,7 +217,7 @@ export async function handleGetModelFields(
     }
 
     const fieldNames = await ankiClient.getModelFieldNames(modelName);
-    
+
     return {
       content: [{
         type: 'text',
@@ -229,6 +229,163 @@ export async function handleGetModelFields(
       content: [{
         type: 'text',
         text: `Error getting model fields: ${error instanceof Error ? error.message : String(error)}`
+      }],
+      isError: true
+    };
+  }
+}
+
+/**
+ * Handle updating note fields
+ */
+export async function handleUpdateNote(
+  ankiClient: AnkiConnectClient,
+  args: ToolArguments
+): Promise<CallToolResult> {
+  try {
+    const { noteId, fields } = args as { noteId: number; fields: Record<string, string> };
+
+    if (!noteId) {
+      return {
+        content: [{
+          type: 'text',
+          text: 'Error: noteId parameter is required'
+        }],
+        isError: true
+      };
+    }
+
+    if (!fields || Object.keys(fields).length === 0) {
+      return {
+        content: [{
+          type: 'text',
+          text: 'Error: fields parameter is required and must contain at least one field'
+        }],
+        isError: true
+      };
+    }
+
+    // Get note info to verify it exists and get its current state
+    let noteInfo;
+    try {
+      noteInfo = await ankiClient.getNoteInfo(noteId);
+    } catch (error) {
+      return {
+        content: [{
+          type: 'text',
+          text: `Error: Note with ID ${noteId} not found`
+        }],
+        isError: true
+      };
+    }
+
+    // Update the note fields
+    await ankiClient.updateNoteFields(noteId, fields);
+
+    const fieldsText = Object.entries(fields)
+      .map(([key, value]) => `  ${key}: ${value}`)
+      .join('\n');
+
+    return {
+      content: [{
+        type: 'text',
+        text: `✅ Successfully updated note ${noteId}!\n` +
+              `📝 Updated fields:\n${fieldsText}\n` +
+              `🏷️  Model: ${noteInfo.modelName}\n` +
+              (noteInfo.tags.length > 0 ? `🏷️  Tags: ${noteInfo.tags.join(', ')}` : '')
+      }]
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error updating note: ${error instanceof Error ? error.message : String(error)}`
+      }],
+      isError: true
+    };
+  }
+}
+
+/**
+ * Handle getting note information
+ */
+export async function handleGetNoteInfo(
+  ankiClient: AnkiConnectClient,
+  args: ToolArguments
+): Promise<CallToolResult> {
+  try {
+    const { noteId } = args as { noteId: number };
+
+    if (!noteId) {
+      return {
+        content: [{
+          type: 'text',
+          text: 'Error: noteId parameter is required'
+        }],
+        isError: true
+      };
+    }
+
+    const noteInfo = await ankiClient.getNoteInfo(noteId);
+
+    const fieldsText = Object.entries(noteInfo.fields)
+      .map(([key, value]) => `  ${key}: ${value}`)
+      .join('\n');
+
+    return {
+      content: [{
+        type: 'text',
+        text: `📝 Note Information (ID: ${noteId}):\n` +
+              `🏷️  Model: ${noteInfo.modelName}\n` +
+              `📋 Fields:\n${fieldsText}\n` +
+              (noteInfo.tags.length > 0 ? `🏷️  Tags: ${noteInfo.tags.join(', ')}` : '')
+      }]
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error getting note info: ${error instanceof Error ? error.message : String(error)}`
+      }],
+      isError: true
+    };
+  }
+}
+
+/**
+ * Handle deleting notes
+ */
+export async function handleDeleteNotes(
+  ankiClient: AnkiConnectClient,
+  args: ToolArguments
+): Promise<CallToolResult> {
+  try {
+    const { noteIds } = args as { noteIds: number[] };
+
+    if (!noteIds || noteIds.length === 0) {
+      return {
+        content: [{
+          type: 'text',
+          text: 'Error: noteIds parameter is required and must contain at least one ID'
+        }],
+        isError: true
+      };
+    }
+
+    await ankiClient.deleteNotes(noteIds);
+
+    return {
+      content: [{
+        type: 'text',
+        text: `✅ Successfully deleted ${noteIds.length} note(s)!\n` +
+              `🗑️  Deleted IDs: ${noteIds.join(', ')}`
+      }]
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error deleting notes: ${error instanceof Error ? error.message : String(error)}`
       }],
       isError: true
     };

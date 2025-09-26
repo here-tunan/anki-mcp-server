@@ -15,5 +15,8 @@ export {
   handleSearchCards,
   handleAddNote,
   handleGetModels,
-  handleGetModelFields
+  handleGetModelFields,
+  handleUpdateNote,
+  handleGetNoteInfo,
+  handleDeleteNotes
 } from './card-handler.js';

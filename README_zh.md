@@ -19,6 +19,8 @@
 - 📚 **牌组管理**：获取牌组列表、查看牌组统计信息
 - 🔍 **卡片搜索**：支持 Anki 高级查询语法的卡片搜索
 - ➕ **智能创建**：通过 AI 辅助创建和管理 Anki 卡片
+- ✏️ **卡片编辑**：更新现有卡片的字段和内容
+- 🗑️ **卡片删除**：删除不需要的卡片和笔记
 - 📊 **数据分析**：获取学习统计和进度信息
 - 🔧 **模板管理**：查看和使用不同的笔记类型
 
@@ -103,6 +105,9 @@ Claude：我来为您创建这个单词卡片...
 | `get_deck_stats` | 获取牌组统计信息 | `deckName` |
 | `search_cards` | 搜索卡片 | `query` |
 | `add_note` | 添加新笔记 | `deckName`, `modelName`, `fields`, `tags` |
+| `update_note` | 更新现有笔记字段 | `noteId`, `fields` |
+| `get_note_info` | 获取笔记详细信息 | `noteId` |
+| `delete_notes` | 删除一个或多个笔记 | `noteIds` |
 | `get_models` | 获取所有笔记类型 | 无 |
 | `get_model_fields` | 获取笔记类型字段 | `modelName` |
 
@@ -183,6 +188,55 @@ Claude Code (MCP 客户端) ←→ Anki MCP Server ←→ AnkiConnect ←→ Ank
     "Back": "短暂的；朝生暮死的"
   },
   "tags": ["vocabulary", "adjective"]
+}
+```
+
+### update_note
+更新现有笔记的字段。
+
+**参数：**
+- `noteId`：要更新的笔记 ID
+- `fields`：包含字段名和新值的对象
+
+**示例：**
+```json
+{
+  "noteId": 1234567890,
+  "fields": {
+    "Back": "极其短暂的；朝生暮死的"
+  }
+}
+```
+
+### get_note_info
+获取指定笔记的详细信息。
+
+**参数：**
+- `noteId`：要查询的笔记 ID
+
+**返回示例：**
+```json
+{
+  "noteId": 1234567890,
+  "modelName": "Basic",
+  "fields": {
+    "Front": "ephemeral",
+    "Back": "短暂的；朝生暮死的"
+  },
+  "tags": ["vocabulary", "adjective"]
+}
+```
+
+### delete_notes
+删除一个或多个笔记。
+
+**参数：**
+- `noteIds`：要删除的笔记 ID 数组
+
+**示例：**
+```json
+{
+  "noteIds": [1234567890, 9876543210]
 }
 ```
 

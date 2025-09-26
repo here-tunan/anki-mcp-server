@@ -1,6 +1,6 @@
 {
   "name": "mcp-server-anki",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Model Context Protocol (MCP) server enabling AI assistants (Claude, GPT-4, Gemini, etc.) to interact with Anki flashcards through AnkiConnect.",
   "main": "dist/index.js",
   "bin": {
